@@ -21,21 +21,51 @@ const stickers = [
     ]
 }
 ]
+const user = {
+    method:"connection",
+    userId:253,
+    username:"sergey",
+    roomId:`f${(+new Date).toString(16)}`
+}
+var socket = new WebSocket("ws://localhost:5000/")
+socket.onopen = () => {
+    socket.send(JSON.stringify(user))
+}
 
-function sendStickerPositionData (id,posX,posY) {
+socket.onmessage = (event) => {
+    let message = JSON.parse(event.data)
+    console.log(message)
+}
+socket.onclose = () => {
+    console.log("Сокет закрыт")
+}
 
+socket.onerror = (e) => {
+    console.log(e)
+}
+
+
+function sendStickerPositionData (id,posX,posY,username) {
+    const card = {id:id,posX:posX,posY:posY,username:username,method:"stickerMove"}
+    socket.send(JSON.stringify(card))
 }
 
 function moveStickers (sticker) {
     if ($("#editMode").is(':checked')){
+        let posY 
+        let posX
         sticker.children('.sticker-pin').addClass('unpinned')
         $(".workspace").mousemove(function(e) { 
-            sticker.offset({ top: e.clientY-10, left: e.clientX-140})
+            posY = e.clientY-10
+            posX = e.clientX-140
+            sticker.offset({ top: posY-10, left: posX-140})
+            sendStickerPositionData(sticker.attr('id'),posX,posY,user.username)
         });
         sticker.on('click.second',(function(e){
             $(".workspace").off("mousemove") 
                 sticker.children('.sticker-pin').removeClass('unpinned')
                 sticker.off("click.second")
+                //POST к базе с позицией
         }))
     } 
 }
@@ -104,11 +134,14 @@ $(document).ready(function(){
     });
 
     $(".sticker-content-line").on('click',(function(e){
+        let sticker = $(e.target).attr('id')
        if ($("#writeMode").is(":checked")) {
         var text = prompt("Изменить надпись", e.target.innerHTML);
         if (text) {
             e.target.innerHTML=text
-        }
+            const card = {id:sticker,text:text,username:user.username,method:"stickerEdit"}
+            socket.send(JSON.stringify(card))
+        }   
     }
     }))
 
@@ -121,14 +154,31 @@ $(document).ready(function(){
     }))
 
     $("#login").on('click',(function(){
-        $.ajax({
-            url: "http://localhost:80/registration/",
-            success: function(result){
-                let response = result
-               console.log(response);
-            }
-         });
-    }))
+
+        let response
+        // $.ajax({
+        //     url: "http://localhost:80/registration",
+        //     method:"POST",
+        //     data:{message:"boba"},
+        //     success: function(result){
+        //        response = JSON.parse(result)
+        //        console.log("fdzdsf");
+        //     }
+        //  });
+        //     console.log("GET")
+        // $.ajax({
+        //     url: "http://localhost:80/",
+        //     method:"POST",
+        //     success: function(result){
+        //         let response = result
+        //        console.log(response);
+        //     }
+        //  });
+
+         $.get("http://localhost:80/",{name:"dsdsd"},function(data){
+            console.log(JSON.parse(data))
+         })
+    })) 
 
      
 
