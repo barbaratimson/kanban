@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban</title>
-    <script defer src="lib/code.jquery.com_jquery-3.7.0.min.js" ></script>
+    <script src="lib/code.jquery.com_jquery-3.7.0.min.js"></script>
 </head>
 <body>
     <form>
@@ -18,16 +18,19 @@
         <button id = "register" type="submit">Регистрация</button>
     </form>
 </body>
+
 <script>
-    $("#register").on('click', function(){
-            $.ajax({
-                url: "http://localhost:5000/get",
-                method:"GET",
-                success: function(result){
-                    response = JSON.parse(result)
-                   console.log(response);
-                }
-             });
-    })
+    $("#register").on('click', function(e){
+    e.preventDefault();
+        let userData = {username:$('#login').val(),password:$('#password').val()}
+        $.ajax({
+            url: "http://localhost/user",
+            data:JSON.stringify(userData),
+            method:"POST",
+         }).done(function(data){
+            console.log(data)
+         });
+})
+
 </script>
 </html>

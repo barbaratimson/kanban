@@ -4,15 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban</title>
+    <script src="lib/code.jquery.com_jquery-3.7.0.min.js"></script>
 </head>
 <body>
-    <form>
         <h1>Войти</h1>
         <h2>Логин</h1>
         <input type="text" id = "login">
         <h2>Пароль</h1>
         <input type="text" id = "password">
-        <button type="submit">Вход</button>
-    </form>
+        <button id = "login-button" type="submit">Вход</button>
 </body>
+
+<script>
+    $("#login-button").on('click', function(e){
+    e.preventDefault();
+        let userData = {username:$('#login').val(),password:$('#password').val()}
+        $.ajax({
+            url: "http://localhost/auth/login",
+            data:JSON.stringify(userData),  
+            method:"POST",
+         }).done(function(data){
+            console.log(data)
+         });
+})
+
+</script>
 </html>

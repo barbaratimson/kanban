@@ -27,7 +27,9 @@ const user = {
     username:"sergey",
     roomId:`f${(+new Date).toString(16)}`
 }
+
 var socket = new WebSocket("ws://localhost:5000/")
+
 socket.onopen = () => {
     socket.send(JSON.stringify(user))
 }
@@ -50,14 +52,12 @@ function sendStickerPositionData (id,posX,posY,username) {
     socket.send(JSON.stringify(card))
 }
 
-function moveStickers (sticker) {
+function moveStickers (sticker,posX,posY) {
     if ($("#editMode").is(':checked')){
-        let posY 
-        let posX
         sticker.children('.sticker-pin').addClass('unpinned')
         $(".workspace").mousemove(function(e) { 
-            posY = e.clientY-10
-            posX = e.clientX-140
+            posY = e.clientY-pageYOffset
+            posX = e.clientX-pageXOffset
             sticker.offset({ top: posY-10, left: posX-140})
             sendStickerPositionData(sticker.attr('id'),posX,posY,user.username)
         });
