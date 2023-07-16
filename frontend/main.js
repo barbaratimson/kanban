@@ -1,3 +1,6 @@
+const socket = io('ws://localhost:5000/', { transports: ['websocket', 'polling', 'flashsocket'] })
+
+var connectionStatus = false
 const stickers = [
     {
     id:1,
@@ -22,38 +25,100 @@ const stickers = [
 }
 ]
 const user = {
-    method:"connection",
-    userId:253,
+    userId:window.localStorage.getItem("token"),
     username:"sergey",
-    roomId:`f${(+new Date).toString(16)}`
+    // roomId:`f${(+new Date).toString(16)}`
+        roomId:123
 }
 
-var socket = new WebSocket("ws://localhost:5000/")
 
-socket.onopen = () => {
-    socket.send(JSON.stringify(user))
-}
 
-socket.onmessage = (event) => {
-    let message = JSON.parse(event.data)
-    console.log(message)
-}
-socket.onclose = () => {
-    console.log("Сокет закрыт")
-}
+socket.on('connect', () => {
+   console.log("Connected")
+   connectionStatus = true
+   $(".connection-indicator").css("background-color","green")
+})
 
-socket.onerror = (e) => {
-    console.log(e)
-}
+socket.emit('joinRoom',user)
+
+socket.on('editSticker', message => {
+    serverEditStickers(message.stickerId,message.id,message.text,message.username)
+})
+
+socket.on('moveSticker', message => {
+    serverMoveStickers(message.id,message.posX,message.posY)
+})
+
+socket.on('userConnected', message => {
+    serverUserConnected(message.username)
+})
+
+socket.on('disconnect',()=> {
+    connectionStatus = false
+    $(".connection-indicator").css("background-color","red")
+})
+
+socket.on('error',()=> {
+    connectionStatus = false
+    $(".connection-indicator").css("background-color","red")
+})
 
 
 function sendStickerPositionData (id,posX,posY,username) {
-    const card = {id:id,posX:posX,posY:posY,username:username,method:"stickerMove"}
-    socket.send(JSON.stringify(card))
+    socket.emit("moveSticker",{id:id,posX:posX,posY:posY,username:username})
 }
 
+function serverMoveStickers (stickerId,posX,posY) {
+    $(`div#${stickerId}.sticker`).offset({ top: posY-10, left: posX-140})
+    }
+
+function serverEditStickers (stickerId,textId,text) {
+    $(`div#${stickerId}.sticker`).children(".sticker-content").children(`div#${textId}.sticker-content-line`).text(text)
+}
+
+
+function serverLogStickerChange (stickerId,username) {
+    let content = $("<div>",{
+        class:'user-username',
+        css:{
+            background:"#d897f9",
+            color:"#e5c710",
+            position:"absolute",
+            bottom:"200px"
+
+        }
+    })  
+        content.html(username,stickerId)
+
+
+    $(".right-menu").append(content)
+
+}
+
+function serverUserConnected (username) {
+    let content = $("<div>",{
+        class:'user-username',
+        css:{
+            background:"#d897f9",
+            color:"#e5c710",
+            position:"absolute",
+            bottom:"200px"
+
+        }
+    })  
+        content.html(username)
+
+
+    $(".right-menu").append(content)
+
+}
+
+
+
+
+
 function moveStickers (sticker,posX,posY) {
-    if ($("#editMode").is(':checked')){
+    if ($("#editMode").is(':checked') && connectionStatus){
         sticker.children('.sticker-pin').addClass('unpinned')
         $(".workspace").mousemove(function(e) { 
             posY = e.clientY-pageYOffset
@@ -69,6 +134,8 @@ function moveStickers (sticker,posX,posY) {
         }))
     } 
 }
+
+
 
 
 function lostConnectionSyncDada () {
@@ -103,7 +170,6 @@ function renderStickers (stickers) {
         })  
             content.html(elem.text)
             contents = contents.add(content)
-            // contents = contents.add(`<div class = "sticker-content-line">${elem.text}</div>`);
         })
 
         sticker.children(".sticker-content").append(
@@ -117,7 +183,8 @@ function renderStickers (stickers) {
 
 
 $(document).ready(function(){
-
+    console.log(window.localStorage.getItem("token"))
+    $(".room-name").text(user.username + '`s room')
     renderStickers(stickers)
 
     $(".sticker").on('click',(function(e){
@@ -126,54 +193,39 @@ $(document).ready(function(){
 
     $(document).keydown(function(event) {
         var keyChar = String.fromCharCode(event.keyCode).toLowerCase();
-        if (keyChar == "x" && event.ctrlKey) {
+        if (keyChar == "x" && event.ctrlKey && connectionStatus) {
             $("#editMode").trigger("click")
-        } else if (keyChar == "q" && event.ctrlKey) {
+        } else if (keyChar == "q" && event.ctrlKey && connectionStatus) {
             $("#writeMode").trigger("click")
         } 
     });
 
     $(".sticker-content-line").on('click',(function(e){
         let sticker = $(e.target).attr('id')
-       if ($("#writeMode").is(":checked")) {
+        let parent = $(e.target).closest(".sticker").attr("id")
+       if ($("#writeMode").is(":checked") && connectionStatus) {
         var text = prompt("Изменить надпись", e.target.innerHTML);
         if (text) {
             e.target.innerHTML=text
-            const card = {id:sticker,text:text,username:user.username,method:"stickerEdit"}
-            socket.send(JSON.stringify(card))
+            const card = {id:sticker,stickerId:parent,text:text,username:user.username}
+            socket.emit('editSticker',card)
         }   
     }
     }))
 
-    $('.left-menu').on('click',(function(e){
-        $(this).children(".left-menu-arrow").toggleClass('rotate')
+
+
+
+
+    $('.right-menu').on('click',(function(e){
+        $(this).children(".right-menu-arrow").toggleClass('rotate')
     }))
 
-    $(".left-menu").on('click',(function(){
+    $(".right-menu").on('click',(function(){
         $(this).toggleClass("open")
     }))
 
     $("#login").on('click',(function(){
-
-        let response
-        // $.ajax({
-        //     url: "http://localhost:80/registration",
-        //     method:"POST",
-        //     data:{message:"boba"},
-        //     success: function(result){
-        //        response = JSON.parse(result)
-        //        console.log("fdzdsf");
-        //     }
-        //  });
-        //     console.log("GET")
-        // $.ajax({
-        //     url: "http://localhost:80/",
-        //     method:"POST",
-        //     success: function(result){
-        //         let response = result
-        //        console.log(response);
-        //     }
-        //  });
 
          $.get("http://localhost:80/",{name:"dsdsd"},function(data){
             console.log(JSON.parse(data))

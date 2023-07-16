@@ -54,7 +54,7 @@ footer {
     grid-row-gap: 20px;
 }
 
-.left-menu {
+.right-menu {
     position: absolute;
     top: 0;
     right: 0;
@@ -67,7 +67,7 @@ footer {
     z-index: 10;
 }
 
-.left-menu:hover {
+.right-menu:hover {
     transform: translate(180px);
 }
 
@@ -79,7 +79,7 @@ footer {
     transform: none;
 }
 
-.left-menu-arrow {
+.right-menu-arrow {
     display: flex;
     position: relative;
     left: 0;
@@ -145,4 +145,11 @@ footer {
     cursor: none;
     rotate: 40deg;
     user-select: none;
+}
+
+.connection-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50% 50%;
+    background-color: red;
 }
