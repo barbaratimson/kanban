@@ -1,11 +1,9 @@
-const path = require('path')
 const http = require('http')
 const socketio = require('socket.io')
 const express = require('express')
 const app = express()
 const server = http.createServer(app)
 const io = socketio(server);
-const cors = require('cors')
 
 const PORT = 5000
 
@@ -17,11 +15,12 @@ function getUser(id) {
 
 io.on('connection', socket => {
     socket.on('joinRoom',(client)=>{
-        const user = {id:socket.id, userId:client.userId,username:client.username,room:client.roomId}
+        const user = {id:socket.id,userId:client.id,username:client.username,room:client.roomId}
         users.push(user)
         socket.join(user.room)
         socket.in(user.room).emit("userConnected",user)
         console.log("User:", user, "-> connected")
+
         socket.on('editSticker', message => {
             console.log(message)
             socket.broadcast.to(user.room).emit("editSticker",message)

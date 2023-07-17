@@ -28,8 +28,8 @@
             data:JSON.stringify(userData),
             method:"POST",
          }).done(function(data){
-            window.localStorage.setItem("token",data.id)
-            window.location.assign("http://127.0.0.1:5501/frontend/index.html")
+            console.log(data)
+            window.location.assign("http://127.0.0.1:5501/frontend/login.html")
          });
 })
 

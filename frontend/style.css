@@ -153,3 +153,41 @@ footer {
     border-radius: 50% 50%;
     background-color: red;
 }
+
+.center-menu-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 200px;
+    padding: 150px;
+    border-radius: 10px;
+    box-shadow: 1px 3px 37px 10px rgba(34, 60, 80, 0.2);
+}
+
+.left-button,.right-button {
+    width: 100px;
+    height: 100px;
+    background-color: rgb(233, 233, 233);
+    border: 3px solid grey;
+    border-radius: 20px;
+    transition: all .4s;
+}
+
+.left-button:hover,.right-button:hover {
+    scale: 1.15;
+    background-color: rgb(179, 255, 255);
+    border-color: rgb(63, 226, 226);
+}
+
+.left-button:active,.right-button:active {
+    scale: 1;
+}

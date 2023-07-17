@@ -24,8 +24,9 @@
             data:JSON.stringify(userData),  
             method:"POST",
          }).done(function(data){
-            window.localStorage.setItem("token",data.id)
-            window.location.assign("http://127.0.0.1:5501/frontend/index.html")
+            window.localStorage.setItem("token",data.token)
+            console.log(window.localStorage.getItem("token"))
+            window.location.assign("http://127.0.0.1:5501/frontend/lobby.html")
          });
 })
 

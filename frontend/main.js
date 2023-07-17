@@ -1,6 +1,37 @@
 const socket = io('ws://localhost:5000/', { transports: ['websocket', 'polling', 'flashsocket'] })
 
 var connectionStatus = false
+function getUrlVars()
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}
+let roomId = getUrlVars().roomId
+jQuery.extend({
+    getUserData: function() {
+        var result = null;
+        $.ajax({
+            url: "http://localhost/user",
+            type: 'GET',
+            async:false,
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            success: function(data) {
+                result = data;
+            }
+        });
+       return result;
+    }
+});
+
+let user = $.getUserData()
+user.roomId = roomId
 const stickers = [
     {
     id:1,
@@ -24,13 +55,6 @@ const stickers = [
     ]
 }
 ]
-const user = {
-    userId:window.localStorage.getItem("token"),
-    username:"sergey",
-    // roomId:`f${(+new Date).toString(16)}`
-        roomId:123
-}
-
 
 
 socket.on('connect', () => {
@@ -75,6 +99,7 @@ function serverMoveStickers (stickerId,posX,posY) {
 function serverEditStickers (stickerId,textId,text) {
     $(`div#${stickerId}.sticker`).children(".sticker-content").children(`div#${textId}.sticker-content-line`).text(text)
 }
+
 
 
 function serverLogStickerChange (stickerId,username) {
@@ -181,7 +206,6 @@ function renderStickers (stickers) {
     });
 }
 
-
 $(document).ready(function(){
     console.log(window.localStorage.getItem("token"))
     $(".room-name").text(user.username + '`s room')
@@ -199,6 +223,10 @@ $(document).ready(function(){
             $("#writeMode").trigger("click")
         } 
     });
+
+    $("#debug").on('click',function(){
+        getUser()
+    })
 
     $(".sticker-content-line").on('click',(function(e){
         let sticker = $(e.target).attr('id')
