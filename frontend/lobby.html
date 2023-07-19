@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban</title>
     <script src="lib/code.jquery.com_jquery-3.7.0.min.js"></script>
+    <script src="lib/jquery.extention.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,28 +18,19 @@
 </body>
 
 <script>
-    jQuery.extend({
-    getRoom: function() {
-        var result = null;
-        $.ajax({
-            url: "http://localhost/room",
-            method:"GET",
-            async:false,
-            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
-            success: function(data) {
-                result = data;
-            }
-        });
-       return result;
-    }
-});
-
-let roomId = $.getRoom().roomId
+let roomId = $.getUserRoom()
+let user = $.getUserData()
+if (!user) {
+    window.location.assign("./login.html")
+} 
+if (roomId){
+    roomId = roomId.roomId
+}
 
     $("#connect-button").on('click', function(e){
         let roomIdConnect = prompt("Connect",roomId)
         if (roomIdConnect.length === 13){
-        window.location.assign(`http://127.0.0.1:5501/frontend/index.html?roomId=${roomIdConnect}`)
+        window.location.assign(`./index.html?roomId=${roomIdConnect}`)
         } 
 
 })
@@ -48,14 +40,15 @@ if (roomId){
 } else {
     $("#create-button").on('click', function(e){
     let roomId = Date.now()
+    let password = prompt("Pick a password")
     $.ajax({
             url: "http://localhost/room/create",
-            data:JSON.stringify({roomId:roomId}),  
+            data:JSON.stringify({roomId:roomId,password:password}),  
             method:"POST",
             headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
          }).done(function(data){
             console.log(data)
-             window.location.assign(`http://127.0.0.1:5501/frontend/index.html?roomId=${roomIdConnect}`)
+             window.location.assign(`./index.html?roomId=${roomId}`)
          });
         })
 }

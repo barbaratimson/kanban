@@ -7,13 +7,12 @@
     <link rel="stylesheet" href="style.css">
     <script src="lib/code.jquery.com_jquery-3.7.0.min.js" ></script>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="lib/jquery.extention.js"></script>
     <script defer src="main.js"></script>
 </head>
 <body>
     <nav>
-        <button id = "debug" >DEBUG</button>
         <div class="room-name">
-            User1234`s room
         </div>
         <div class="user-section">
             <button id = "register" ><a href="registration.html">Register</a></button>
@@ -22,16 +21,23 @@
         <div class="controls">
             <input type="checkbox" id="editMode">Edit (CTRL + X)
             <input type="checkbox" id="writeMode">Pencil (CTRL + Q)
-            <div class="room-settings"></div>
+            <button class="create-sticker">+</button>Add sticker
         </div>
         <div class="connection-section">
             <div class="connection-status">Connection status <div class="connection-indicator"></div></div>
-            <div class="sync">Data sync</div>
         </div>
     </nav>
     <div class="user-window"></div>
     <div class="right-menu">
         <div class="right-menu-arrow"><svg viewBox="-4.5 0 20 20"  fill="#f3f2f1"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>arrow_left [#335]</title> <desc>Created with Sketch.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Dribbble-Light-Preview" transform="translate(-345.000000, -6679.000000)" fill="#f3f2f1"> <g id="icons" transform="translate(56.000000, 160.000000)"> <path d="M299.633777,6519.29231 L299.633777,6519.29231 C299.228878,6518.90256 298.573377,6518.90256 298.169513,6519.29231 L289.606572,6527.55587 C288.797809,6528.33636 288.797809,6529.60253 289.606572,6530.38301 L298.231646,6538.70754 C298.632403,6539.09329 299.27962,6539.09828 299.685554,6538.71753 L299.685554,6538.71753 C300.100809,6538.32879 300.104951,6537.68821 299.696945,6537.29347 L291.802968,6529.67648 C291.398069,6529.28574 291.398069,6528.65315 291.802968,6528.26241 L299.633777,6520.70538 C300.038676,6520.31563 300.038676,6519.68305 299.633777,6519.29231" id="arrow_left-[#335]"> </path> </g> </g> </g> </g></svg></div>
+        <div class="chat-container">
+        <div class="chatroom">
+
+        </div>
+        <div class="users-in-room">
+            
+        </div>
+    </div>
     </div>
     <div class="workspace">
         <div class="workspace-wrapper">
