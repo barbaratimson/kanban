@@ -11,7 +11,9 @@
 <body>
         <div class="center-menu-container">
             <div class="center-menu">
+                <div>
                 <button class="left-button" id = "connect-button">CONNECT</button>
+                 </div>
                 <button class="right-button" id = "create-button">CREATE</button>
         </div>
     </div>
@@ -29,6 +31,8 @@ if (roomId){
 
     $("#connect-button").on('click', function(e){
         let roomIdConnect = prompt("Connect",roomId)
+        let password = prompt("password")
+        localStorage.setItem("roomPassword",password)
         if (roomIdConnect.length === 13){
         window.location.assign(`./index.html?roomId=${roomIdConnect}`)
         } 
@@ -49,6 +53,7 @@ if (roomId){
          }).done(function(data){
             console.log(data)
              window.location.assign(`./index.html?roomId=${roomId}`)
+
          });
         })
 }

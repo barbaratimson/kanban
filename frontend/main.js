@@ -15,63 +15,76 @@ function getUrlVars()
 }
 
 let user = $.getUserData()
-if (!user.username) {
-    window.location.assign("./lobby.html")
+if (user && !user.username) {
+    window.location.assign("./login.html")
+} else if (!user){
+    window.location.assign("./error.html")
 }
 let roomId = getUrlVars().roomId
-user.roomId = roomId
-// let password = prompt("password")
-let password = 123
-let roomConnect = $.connectRoom(roomId,password).valid
-if (roomConnect === false){
+if (roomId){
+    user.roomId = roomId
+    $("#roomId").val(roomId)
+} 
+password = localStorage.getItem("roomPassword")
+let roomConnect = $.connectRoom(roomId,password)
+if (roomConnect && roomConnect.valid === false){
     window.location.assign("./lobby.html")
+} else  {
+    roomConnect = roomConnect.valid
+    renderStickers($.getStickers(roomConnect,roomId).stickers)
+
 }
 
-renderStickers($.getStickers(roomConnect,roomId).stickers)
+
 const socket = io('ws://localhost:5000/', { transports: ['websocket', 'polling', 'flashsocket'] })
 
-socket.on('connect', () => {
-   console.log("Connected")
-   connectionStatus = true
-   $(".connection-indicator").css("background-color","green")
-})
+    socket.on('connect', () => {
+        connectionStatus = true
+        $(".connection-indicator").css("background-color","green")
+     })
+     
+     
+     socket.emit('joinRoom',user)
+     
+     socket.on('editSticker', message => {
+         serverEditStickers(message.stickerId,message.id,message.text,message.username)
+     })
+     
+     socket.on('moveSticker', message => {
+         serverMoveStickers(message.id,message.posX,message.posY)
+     })
+     
+     socket.on('newSticker', message => {
+         window.location.reload();
+     })
+     
+     socket.on('titleSticker', message => {
+         serverChangeTitleStickers(message.id,message.text)
+     })
+     
+     socket.on('textSticker', message => {
+         serverChangeTextStickers(message.id,message.text)
+     })
+     
+     socket.on('deleteSticker', message => {
+        window.location.reload()
+    })
+    
+     
+     socket.on('userConnected', message => {
+         serverUserConnected(message.username)
+     })
+     
+     socket.on('disconnect',()=> {
+         connectionStatus = false
+         $(".connection-indicator").css("background-color","red")
+     })
+     
+     socket.on('error',()=> {
+         connectionStatus = false
+         $(".connection-indicator").css("background-color","red")
+     })
 
-socket.emit('joinRoom',user)
-
-socket.on('editSticker', message => {
-    serverEditStickers(message.stickerId,message.id,message.text,message.username)
-})
-
-socket.on('moveSticker', message => {
-    serverMoveStickers(message.id,message.posX,message.posY)
-})
-
-socket.on('newSticker', message => {
-    window.location.reload();
-})
-
-socket.on('titleSticker', message => {
-    serverChangeTitleStickers(message.id,message.text)
-})
-
-socket.on('textSticker', message => {
-    serverChangeTextStickers(message.id,message.text)
-})
-
-
-socket.on('userConnected', message => {
-    serverUserConnected(message.username)
-})
-
-socket.on('disconnect',()=> {
-    connectionStatus = false
-    $(".connection-indicator").css("background-color","red")
-})
-
-socket.on('error',()=> {
-    connectionStatus = false
-    $(".connection-indicator").css("background-color","red")
-})
 
 
 function sendStickerPositionData (id,posX,posY,username) {
@@ -81,7 +94,6 @@ function sendStickerPositionData (id,posX,posY,username) {
 
 
 function serverMoveStickers (stickerId,posX,posY) {
-    console.log(stickerId)
     $(`div#${stickerId}.sticker`).offset({ top: posY, left: posX})
     }
 
@@ -124,15 +136,12 @@ function serverUserConnected (username) {
         css:{
             background:"#d897f9",
             color:"#e5c710",
-            position:"absolute",
-            bottom:"200px"
-
         }
     })  
         content.html(username)
 
 
-    $(".right-menu").append(content)
+    $(".chat-menu").children(".users-in-room").append(content)
 
 }
 
@@ -144,15 +153,17 @@ function moveStickers (sticker,posX,posY) {
     if ($("#editMode").is(':checked') && connectionStatus){
         sticker.children('.sticker-pin').addClass('unpinned')
         $(".workspace").mousemove(function(e) { 
-            posY = e.clientY-pageYOffset-10
-            posX = e.clientX-pageXOffset-140
+            posY = e.clientY-pageYOffset-15
+            posX = e.clientX-pageXOffset-145
             sticker.offset({ top: posY, left: posX})
+            sticker.css("z-index",2)
             sendStickerPositionData(sticker.attr('id'),posX,posY,user.username)
         });
         sticker.on('click.second',(function(e){
             $(".workspace").off("mousemove") 
                 sticker.children('.sticker-pin').removeClass('unpinned')
                 sticker.off("click.second")
+                sticker.css("z-index","")
                 $.changeStickerPos(roomId,sticker.attr('id'),posX,posY)
         }))
     } 
@@ -215,29 +226,40 @@ function renderStickers (stickers) {
 
 
 $(document).ready(function(){
-    console.log(window.localStorage.getItem("token"))
     $(".room-name").text(user.username + '`s room')
-
     
     $(".sticker").on('click',(function(e){
         moveStickers($(this))
     }))
     
-
     $(document).keydown(function(event) {
         var keyChar = String.fromCharCode(event.keyCode).toLowerCase();
         if (keyChar == "x" && event.ctrlKey && connectionStatus) {
-            $("#editMode").trigger("click")
+           if ($("#editMode").prop("checked") === false){
+                $("#editMode").trigger("click")
+           }
         } else if (keyChar == "q" && event.ctrlKey && connectionStatus) {
-            $("#writeMode").trigger("click")
+            if ($("#writeMode").prop("checked") === false){
+                $("#writeMode").trigger("click")
+           }
         } 
     });
 
-    $("#debug").on('click',function(){
-        localStorage.clear()
+    $("#editMode").on('click',function(){
+        $("#writeMode").prop("checked",false)
+    })
+
+    $("#writeMode").on('click',function(){
+        $("#editMode").prop("checked",false)
     })
 
     
+    $('.sticker-pin').on('click',function(){
+        $("#editMode").prop("checked",true)
+        $("#writeMode").prop("checked",false)
+    })
+
+
     $(".create-sticker").on('click',(function(e){
         let sticker = $.createSticker(roomId,30,80)
         if (sticker) {
@@ -246,6 +268,16 @@ $(document).ready(function(){
         }
         window.location.reload();
     }))
+
+    $(".sticker-title").on('click',(function(e){
+        $("#editMode").prop("checked",false)
+        $("#writeMode").prop("checked",true)
+    }))
+    $(".sticker-text").on('click',(function(e){
+        $("#editMode").prop("checked",false)
+        $("#writeMode").prop("checked",true)
+    }))
+
         $(".sticker-title").on('input',(function(e){
             let field = $(e.target).attr('id')
             let parent = $(e.target).closest(".sticker").attr("id")
@@ -266,7 +298,6 @@ $(document).ready(function(){
             let parent = $(e.target).closest(".sticker")
             let fieldTitle = parent.children(".sticker-content").children(".sticker-title").val()
             let fieldText = parent.children(".sticker-content").children(".sticker-text").val()
-            console.log(fieldText)
             let parentId = parent.attr("id")
            if (connectionStatus) {
                 $.changeStickerTitle(roomId,parentId,fieldTitle)
@@ -275,6 +306,23 @@ $(document).ready(function(){
         }
         }))
 
+        $(".sticker-delete").on('click',(function(e){
+            let parent = $(e.target).closest(".sticker").attr("id")
+            let sure = confirm("Are you sure")
+           if (connectionStatus && sure) {
+               let a = $.deleteSticker(roomId,parent)
+               console.log(a)
+               if (a) {
+                socket.emit("deleteSticker")
+                window.location.reload()
+               }
+                
+        }
+        }))
+
+    $(".user-button").on('click',function(){
+        $(".user-section").toggleClass("hide")
+    })
     $('.right-menu').on('click',(function(e){
         $(this).children(".right-menu-arrow").toggleClass('rotate')
     }))
@@ -290,6 +338,17 @@ $(document).ready(function(){
          })
     })) 
 
-     
+
+$(".nav-grip").on('mousedown',function(e) {
+        $(document).on("mousemove",function(e) { 
+            posY = e.clientY-pageYOffset-35
+            posX = e.clientX-pageXOffset-245
+            $("nav").offset({ top: posY, left: posX})
+        })
+});
+$(".nav-grip").on('mouseup',function(e) {
+    $(document).off("mousemove")
+});
+
 
 })

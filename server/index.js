@@ -46,6 +46,11 @@ io.on('connection', socket => {
             socket.broadcast.to(user.room).emit("textSticker",message)
         })
 
+        socket.on('deleteSticker', message => {
+            console.log(message)
+            socket.broadcast.to(user.room).emit("deleteSticker",message)
+        })
+
 
         socket.on('disconnect', message => {
             console.log("User:",user,`-> disconnected: ${message}`)

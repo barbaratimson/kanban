@@ -131,3 +131,20 @@ jQuery.extend({
        return result;
     }
 });
+
+jQuery.extend({
+    deleteSticker: function(roomId,cardId) {
+        var result = null;
+        $.ajax({
+            url: "http://localhost/stickers/delete",
+            method:"POST",
+            async:false,
+            data:JSON.stringify({roomId:roomId,cardId:cardId}),
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            success: function(data) {
+                result = data;
+            }
+        });
+       return result;
+    }
+});
