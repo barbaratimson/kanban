@@ -170,34 +170,6 @@ function moveStickers (sticker,posX,posY) {
 }
 
 
-
-function createSticker (stickers) {
-    let sticker = $("<div>", {
-        class: 'sticker',
-        id:stickers.id,
-        css: {
-            "position":"absolute",
-            "left":`${stickers.posX}px`,
-            "top":`${stickers.posY}px`
-        }
-    }).append($("<div>",{
-        class: "sticker-pin pinned"
-    }).append($(`<svg viewBox="0 0 24 24" fill="none">
-    <path opacity="0.15" d="M17 8C17 10.7614 14.7614 13 12 13C9.23858 13 7 10.7614 7 8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8Z" fill="#000000"/>
-    <path d="M12 13V21M12 13C14.7614 13 17 10.7614 17 8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8C7 10.7614 9.23858 13 12 13Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`)),$("<div>",{
-        class: "sticker-content"
-    }).append($(`<input class = "sticker-title">`),$(`<input class = "sticker-text">)`))
-    ).append($(`<button class = "sticker-save">Save</button>`),(`<button class = "sticker-delete">Delete</button>`))
-
-    sticker.appendTo(".workspace-wrapper")
-        sticker.on('click',(function(e){
-            moveStickers($(this))
-        }))
-
-
-}
-
 function renderStickers (stickers) {
     stickers.forEach(elem => {
         let sticker = $("<div>", {
@@ -218,7 +190,7 @@ function renderStickers (stickers) {
         }).append($(`<input value = "${elem.title}" class = "sticker-title">`),$(`<textarea class = "sticker-text" rows="5" cols="80">${elem.text}</textarea>`))
         ).append($("<div>",{
             class: "sticker-footer"
-        }).append($(`<button class = "sticker-save">Save</button>`),(`<button class = "sticker-delete">Delete</button>`)))
+        }).append($(`<button class = "sticker-save"><i class="fa-solid fa-check"></i></button>`),(`<button class = "sticker-delete"><i class="fa-solid fa-trash"></i></button>`)))
 
         sticker.appendTo(".workspace-wrapper")
     });
@@ -263,7 +235,6 @@ $(document).ready(function(){
     $(".create-sticker").on('click',(function(e){
         let sticker = $.createSticker(roomId,30,80)
         if (sticker) {
-        createSticker(roomId,30,80)
         socket.emit("newSticker")
         }
         window.location.reload();
@@ -293,16 +264,21 @@ $(document).ready(function(){
         }
         }))
 
-
+        $(".sticker-footer").on('click',(function(e){
+            $("#editMode").prop("checked",false)
+            $("#writeMode").prop("checked",true)
+        }))
         $(".sticker-save").on('click',(function(e){
             let parent = $(e.target).closest(".sticker")
             let fieldTitle = parent.children(".sticker-content").children(".sticker-title").val()
             let fieldText = parent.children(".sticker-content").children(".sticker-text").val()
             let parentId = parent.attr("id")
            if (connectionStatus) {
-                $.changeStickerTitle(roomId,parentId,fieldTitle)
-                $.changeStickerText(roomId,parentId,fieldText)
-                
+                let a =$.changeStickerTitle(roomId,parentId,fieldTitle)
+                let b =$.changeStickerText(roomId,parentId,fieldText)
+                if (a.message == true && b.message == true) {
+                    alert("Stickes saved")
+                }
         }
         }))
 

@@ -114,6 +114,7 @@ nav{
     align-items: center;
     gap: 10px;
     font-size: 1.25rem;
+    font-weight: 600;
 }
 
 .roomId-section {
@@ -122,6 +123,7 @@ nav{
     align-items: center;
     gap: 10px;
     font-size: 1.25rem;
+    font-weight: 600;
 }
 
 .roomId-section > input {
@@ -262,21 +264,41 @@ footer {
     background-color: transparent;
     border: 0;
     text-align: start;
-    padding: 5px;
     resize: none;
-    max-width: 279px;
+    max-width: 270px;
     outline: none;
-    height: 184px;
+    height: 175px;
     font-size: 18px;
+    
 }
 
+
+:-webkit-scrollbar {
+    width: 0.2em;
+}
+
+:-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+.sticker-text::-webkit-scrollbar {
+    display: none;
+}
 .sticker-footer {
     display: flex;
     position: absolute;
     bottom: 0;
     margin: 10px;
-    gap: 169px;
+    gap: 210px;
+    width: 93%;
 }
+
+.sticker-footer > button{
+    background-color: transparent;
+    border: 0;
+    font-size: 20px;
+}
+
 
 .chat-menu {
     padding: 20px;
