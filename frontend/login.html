@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban</title>
     <script src="lib/code.jquery.com_jquery-3.7.0.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body>  
+    <div class="auth-menu">
         <h1>Sign In</h1>
         <h2>Login</h1>
-        <input type="text" id = "login">
+        <input type="text" minlength="1" id = "login">
         <h2>Password</h1>
-        <input type="text" id = "password">
-        <button id = "login-button" type="submit">Sign In</button>
+        <input type="password" minlength="1" id = "password">
+        <button id = "login-button" class="auth-button" type="submit">Sign In</button>
         <a href="./registration.html">Sign Up</a>
+    </div>
 </body>
 
 <script>
     $("#login-button").on('click', function(e){
-    e.preventDefault();
         let userData = {username:$('#login').val(),password:$('#password').val()}
         $.ajax({
             url: "http://localhost/auth/login",
@@ -26,8 +28,9 @@
             method:"POST",
          }).done(function(data){
             window.localStorage.setItem("token",data.token)
-            console.log(window.localStorage.getItem("token"))
             window.location.assign("./lobby.html")
+         }).fail(function(){
+            alert("Неправильный логин или пароль")
          });
 })
 

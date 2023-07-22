@@ -6,11 +6,20 @@
     <title>Kanban</title>
     <script src="lib/code.jquery.com_jquery-3.7.0.min.js"></script>
     <script src="lib/jquery.extention.js"></script>
+    <link href="./assets/fontawesome-free-6.4.0-web/css/solid.css" rel="stylesheet">
+    <link href="./assets/fontawesome-free-6.4.0-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./assets/fontawesome-free-6.4.0-web/css/brands.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>  
-    <button id = "register" ><a href="registration.html">Register</a></button>
-    <button id = "login" ><a href="login.html">login</a></button>
+    <nav style="top: 10px; left: 10px;min-width: 160px;">
+        <div class="user-button" style="cursor:default;">
+        <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="username" style="font-size: 20px;"></div>
+        <button class="create-sticker" id = "logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </nav>
+
         <div class="center-menu-container">
             <div class="center-menu">
                 <div>
@@ -31,6 +40,9 @@ if (roomId){
     roomId = roomId.roomId
 }
 
+
+$(document).ready(function(){
+    $(".username").text(user.username)
     $("#connect-button").on('click', function(e){
         let roomIdConnect = prompt("Connect",roomId)
         let password = prompt("password")
@@ -59,6 +71,16 @@ if (roomId){
          });
         })
 }
+
+$("#logout").on('click', function(e){
+    let response = $.userLogout()
+    if (response){
+    localStorage.removeItem("token")
+    window.location.assign(`./login.html`)
+    }
+
+})
+})
 
 </script>
 </html>

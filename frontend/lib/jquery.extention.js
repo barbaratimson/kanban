@@ -31,10 +31,10 @@ jQuery.extend({
 });
 
 jQuery.extend({
-    getRoom: function(roomId) {
+    getRoomOwner: function(roomId) {
         var result = null;
         $.ajax({
-            url: "http://localhost/room/get",
+            url: "http://localhost/room/owner",
             method:"GET",
             async:false,
             data:{roomId:roomId},
@@ -89,6 +89,22 @@ jQuery.extend({
             method:"POST",
             async:false,
             data:JSON.stringify({roomId:roomId,posX:posX,posY:posY}),
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            success: function(data) {
+                result = data;
+            }
+        });
+       return result;
+    }
+});
+
+jQuery.extend({
+    userLogout: function() {
+        var result = null;
+        $.ajax({
+            url: "http://localhost/user/logout",
+            method:"POST",
+            async:false,
             headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
             success: function(data) {
                 result = data;

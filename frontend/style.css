@@ -200,14 +200,14 @@ footer {
     justify-content: center;
     align-items: center;
     gap: 200px;
-    padding: 150px;
+    padding: 100px;
     border-radius: 10px;
     box-shadow: 1px 3px 37px 10px rgba(34, 60, 80, 0.2);
 }
 
 .left-button,.right-button {
     width: 100px;
-    height: 100px;
+    height: 100px;  
     background-color: rgba(163, 163, 163, 0.205);
     border: 2.5px solid grey;
     border-radius: 20px;
@@ -252,6 +252,7 @@ footer {
     font-weight: 600;
     padding-bottom: 5px;
     border-bottom:1px solid black;
+    transition: background-color .4s ease-in-out;
 }
 
 .sticker-text {
@@ -263,7 +264,7 @@ footer {
     outline: none;
     height: 175px;
     font-size: 18px;
-    
+    transition: background-color .4s ease-in-out;
 }
 
 
@@ -432,7 +433,7 @@ footer {
     display: flex;
     flex-direction: column;
     max-width: 420px;
-    height: 86%;
+    height: 83%;
     background-color: white;
 }
 
@@ -503,4 +504,55 @@ footer {
     font-size: 18px;
     max-height: 200px;
 
+}
+
+.auth-menu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: auto;
+    top: 50%; 
+    right: 50%;
+    transform: translate(50%,-50%);
+    padding: 20px;
+    box-shadow: 1px 3px 37px 10px rgba(34, 60, 80, 0.2);
+    border-radius: 20px;
+}
+
+.auth-button{
+    outline: 0;
+    border: 0;
+    width: 50%;
+    height: 40px;
+    margin: 30px auto;
+    margin-bottom: 20px;
+    background-color: #09abf0;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 400;
+    transition: all .4s;
+}
+
+.auth-button-button:hover{
+    scale: 1.10;
+}
+
+.auth-button:active{
+    scale: 0.9;
+}
+
+.auth-menu > #login,#password {
+    
+    height: 30px;
+    font-size: 20px;
+}
+
+.auth-menu > h1 {
+    margin: 0;
+    text-align: center;
+}
+
+.auth-menu > h2 {
+    font-weight: 500;
 }

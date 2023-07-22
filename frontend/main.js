@@ -14,6 +14,7 @@ function getUrlVars()
     return vars;
 }
 
+
 let offline = getUrlVars().offline
 let user = $.getUserData()
 if (user && !user.username) {
@@ -22,11 +23,14 @@ if (user && !user.username) {
     window.location.assign("./error.html")
 }
 
+
 let roomId = getUrlVars().roomId
 if (roomId){
     user.roomId = roomId
     $("#roomId").val(roomId)
+
 } 
+
 password = localStorage.getItem("roomPassword")
 let roomConnect = $.connectRoom(roomId,password)
 if (roomConnect && roomConnect.valid === false){
@@ -36,7 +40,7 @@ if (roomConnect && roomConnect.valid === false){
     renderStickers($.getStickers(roomConnect,roomId).stickers)
 
 }
-
+let roomOwner = $.getRoomOwner(roomId)
 
         const socket = io('ws://localhost:5000/', { transports: ['websocket', 'polling', 'flashsocket'] })
 
@@ -82,7 +86,6 @@ if (roomConnect && roomConnect.valid === false){
         })
         
         socket.on('chatMessage', message => {
-            console.log(message)
             serverChatMessage(message)
         })
         
@@ -230,7 +233,7 @@ function renderStickers (stickers) {
 
 
 $(document).ready(function(){
-    $(".room-name").text(user.username + '`s room')
+    $(".room-name").text(roomOwner.username + '`s room')
     
     $(".sticker").on('click',(function(e){
         moveStickers($(this))
@@ -313,7 +316,15 @@ $(document).ready(function(){
                 let a =$.changeStickerTitle(roomId,parentId,fieldTitle)
                 let b =$.changeStickerText(roomId,parentId,fieldText)
                 if (a.message == true && b.message == true) {
-                    alert("Stickes saved")
+                        parent.children(".sticker-content").children(".sticker-text").css("background-color","rgba(54, 189, 54, 0.329)")
+                        parent.children(".sticker-content").children(".sticker-title").css("background-color","rgba(54, 189, 54, 0.329)")
+                    let a = setTimeout(()=>{
+                        parent.children(".sticker-content").children(".sticker-text").css("background-color","transparent")
+                        parent.children(".sticker-content").children(".sticker-title").css("background-color","transparent")
+                    },400)
+                    return function() {
+                        clearTimeout(a)
+                    }
                 }
         }
         }))
@@ -355,13 +366,6 @@ $(document).ready(function(){
     $(".right-menu").on('click',(function(){
         $(this).toggleClass("open")
     }))
-
-    $("#login").on('click',(function(){
-
-         $.get("http://localhost:80/",{name:"dsdsd"},function(data){
-            console.log(JSON.parse(data))
-         })
-    })) 
 
     $(".chat-menu-arrow").on('click',function(e){
         $(".chat-menu").toggleClass("open")
