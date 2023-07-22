@@ -8,7 +8,9 @@
     <script src="lib/jquery.extention.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body>  
+    <button id = "register" ><a href="registration.html">Register</a></button>
+    <button id = "login" ><a href="login.html">login</a></button>
         <div class="center-menu-container">
             <div class="center-menu">
                 <div>
@@ -34,7 +36,7 @@ if (roomId){
         let password = prompt("password")
         localStorage.setItem("roomPassword",password)
         if (roomIdConnect.length === 13){
-        window.location.assign(`./index.html?roomId=${roomIdConnect}`)
+                window.location.assign(`./index.html?roomId=${roomIdConnect}`)
         } 
 
 })

@@ -31,6 +31,23 @@ jQuery.extend({
 });
 
 jQuery.extend({
+    getRoom: function(roomId) {
+        var result = null;
+        $.ajax({
+            url: "http://localhost/room/get",
+            method:"GET",
+            async:false,
+            data:{roomId:roomId},
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            success: function(data) {
+                result = data;
+            }
+        });
+       return result;
+    }
+});
+
+jQuery.extend({
     connectRoom: function(roomId,password) {
         var result = null;
         $.ajax({

@@ -14,12 +14,14 @@ function getUrlVars()
     return vars;
 }
 
+let offline = getUrlVars().offline
 let user = $.getUserData()
 if (user && !user.username) {
     window.location.assign("./login.html")
 } else if (!user){
     window.location.assign("./error.html")
 }
+
 let roomId = getUrlVars().roomId
 if (roomId){
     user.roomId = roomId
@@ -36,59 +38,73 @@ if (roomConnect && roomConnect.valid === false){
 }
 
 
-const socket = io('ws://localhost:5000/', { transports: ['websocket', 'polling', 'flashsocket'] })
+        const socket = io('ws://localhost:5000/', { transports: ['websocket', 'polling', 'flashsocket'] })
 
-    socket.on('connect', () => {
-        connectionStatus = true
-        $(".connection-indicator").css("background-color","green")
-     })
+        socket.on('connect', (message) => {
+            connectionStatus = true
+            $(".connection-indicator").css("background-color","green")
+        })
+        
+        
+        socket.emit('joinRoom',user)
+        
+        socket.on('editSticker', message => {
+            serverEditStickers(message.stickerId,message.id,message.text,message.username)
+        })
+        
+        socket.on('moveSticker', message => {
+            serverMoveStickers(message.id,message.posX,message.posY)
+        })
+        
+        socket.on('newSticker', message => {
+            window.location.reload();
+        })
+        
+        socket.on('titleSticker', message => {
+            serverChangeTitleStickers(message.id,message.text)
+        })
+        
+        socket.on('textSticker', message => {
+            serverChangeTextStickers(message.id,message.text)
+        })
+        
+        socket.on('deleteSticker', message => {
+            window.location.reload()
+        })
+        
+        
+        socket.on('userConnected', message => {
+            serverUsersUpdate(message)
+        })
+
+        socket.on('userDisconnected', message => {
+            serverUsersUpdate(message)
+        })
+        
+        socket.on('chatMessage', message => {
+            console.log(message)
+            serverChatMessage(message)
+        })
+        
+        socket.on('disconnect',()=> {
+            connectionStatus = false
+            localStorage.removeItem("roomPassword")
+            socket.close()
+            $(".connection-indicator").css("background-color","red")
+        })
+        
+        socket.on('error',()=> {
+            connectionStatus = false
+            $(".connection-indicator").css("background-color","red")
+        })
      
-     
-     socket.emit('joinRoom',user)
-     
-     socket.on('editSticker', message => {
-         serverEditStickers(message.stickerId,message.id,message.text,message.username)
-     })
-     
-     socket.on('moveSticker', message => {
-         serverMoveStickers(message.id,message.posX,message.posY)
-     })
-     
-     socket.on('newSticker', message => {
-         window.location.reload();
-     })
-     
-     socket.on('titleSticker', message => {
-         serverChangeTitleStickers(message.id,message.text)
-     })
-     
-     socket.on('textSticker', message => {
-         serverChangeTextStickers(message.id,message.text)
-     })
-     
-     socket.on('deleteSticker', message => {
-        window.location.reload()
-    })
-    
-     
-     socket.on('userConnected', message => {
-         serverUserConnected(message.username)
-     })
-     
-     socket.on('disconnect',()=> {
-         connectionStatus = false
-         $(".connection-indicator").css("background-color","red")
-     })
-     
-     socket.on('error',()=> {
-         connectionStatus = false
-         $(".connection-indicator").css("background-color","red")
-     })
 
 
 
 function sendStickerPositionData (id,posX,posY,username) {
+    if (connectionStatus){
     socket.emit("moveSticker",{id:id,posX:posX,posY:posY,username:username})
+    }
 }
 
 
@@ -109,6 +125,20 @@ function serverChangeTextStickers (stickerId,text) {
     $(`div#${stickerId}.sticker`).children(".sticker-content").children(".sticker-text").val(text)
 }
 
+function serverChatMessage (message) {
+
+    if (message.user.username === user.username) {
+        message.user.username = "You"
+    }
+
+    let content = $("<div>",{
+        class:'message'
+    })
+
+    content.append($(`<div class = "message-username">${message.user.username}</div>`),$(`<div class = "message-text">${message.message}</dib>`))
+    $(".messages").append(content)
+
+}
 
 
 
@@ -130,20 +160,22 @@ function serverLogStickerChange (stickerId,username) {
 
 }
 
-function serverUserConnected (username) {
-    let content = $("<div>",{
-        class:'user-username',
-        css:{
-            background:"#d897f9",
-            color:"#e5c710",
-        }
-    })  
-        content.html(username)
+function serverUsersUpdate (users) {
 
+    $(".chat-menu").children(".users-in-room").empty()
+    users.forEach(elem => {
 
-    $(".chat-menu").children(".users-in-room").append(content)
-
+        let content = $("<div>",{
+            class:'user-username',
+            id:elem.userId
+        })  
+            content.html(elem.username)
+    
+        $(".chat-menu").children(".users-in-room").append(content)
+    }
+    )
 }
+
 
 
 
@@ -152,7 +184,7 @@ function serverUserConnected (username) {
 function moveStickers (sticker,posX,posY) {
     if ($("#editMode").is(':checked') && connectionStatus){
         sticker.children('.sticker-pin').addClass('unpinned')
-        $(".workspace").mousemove(function(e) { 
+        $(".workspace").on("mousemove",function(e) { 
             posY = e.clientY-pageYOffset-15
             posX = e.clientX-pageXOffset-145
             sticker.offset({ top: posY, left: posX})
@@ -192,7 +224,7 @@ function renderStickers (stickers) {
             class: "sticker-footer"
         }).append($(`<button class = "sticker-save"><i class="fa-solid fa-check"></i></button>`),(`<button class = "sticker-delete"><i class="fa-solid fa-trash"></i></button>`)))
 
-        sticker.appendTo(".workspace-wrapper")
+        sticker.appendTo(".workspace")
     });
 }
 
@@ -234,8 +266,8 @@ $(document).ready(function(){
 
     $(".create-sticker").on('click',(function(e){
         let sticker = $.createSticker(roomId,30,80)
-        if (sticker) {
-        socket.emit("newSticker")
+        if (sticker && !offline && connectionStatus) {
+            socket.emit("newSticker")
         }
         window.location.reload();
     }))
@@ -253,14 +285,18 @@ $(document).ready(function(){
             let field = $(e.target).attr('id')
             let parent = $(e.target).closest(".sticker").attr("id")
                 let input = e.target.value
+                if (!offline && connectionStatus){
                 socket.emit("titleSticker",{id:parent,text:input,username:user.username})
+                }
         }))
     
         $(".sticker-text").on('input',(function(e){
             let parent = $(e.target).closest(".sticker").attr("id")
            if (connectionStatus) {
                 let input = e.target.value
+                if (!offline && connectionStatus){
                 socket.emit("textSticker",{id:parent,text:input,username:user.username})
+                }
         }
         }))
 
@@ -287,14 +323,27 @@ $(document).ready(function(){
             let sure = confirm("Are you sure")
            if (connectionStatus && sure) {
                let a = $.deleteSticker(roomId,parent)
-               console.log(a)
                if (a) {
+                if (connectionStatus){
                 socket.emit("deleteSticker")
+                }
                 window.location.reload()
                }
                 
         }
         }))
+
+        $(".chat-message").on('keydown',function(e){
+                if (e.keyCode == 13 && !e.shiftKey)
+                {
+                    e.preventDefault();
+                    let message = $(".chat-message").html()
+                    if (connectionStatus && message.length != 0){  
+                    socket.emit("chatMessage",{message:message,user:user})
+                    $(".chat-message").html("")
+                     }
+                }
+                })  
 
     $(".user-button").on('click',function(){
         $(".user-section").toggleClass("hide")
@@ -314,6 +363,9 @@ $(document).ready(function(){
          })
     })) 
 
+    $(".chat-menu-arrow").on('click',function(e){
+        $(".chat-menu").toggleClass("open")
+    })
 
 $(".nav-grip").on('mousedown',function(e) {
         $(document).on("mousemove",function(e) { 
@@ -326,5 +378,16 @@ $(".nav-grip").on('mouseup',function(e) {
     $(document).off("mousemove")
 });
 
+
+window.addEventListener( "pageshow", function ( event ) {
+    var historyTraversal = event.persisted || 
+                           ( typeof window.performance != "undefined" && 
+                                window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {   
+      window.location.reload();
+    }
+  });
+
+// window.onbeforeunload()
 
 })

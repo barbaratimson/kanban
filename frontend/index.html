@@ -34,15 +34,17 @@
         <div class="nav-grip">
         <i class="fa-solid fa-grip-vertical"></i>
         </div>
+
         <div class="user-section hide">
-            <div class="room-name"></div>
-            <button id = "register" ><a href="registration.html">Register</a></button>
-            <button id = "login" ><a href="login.html">login</a></button>
+            <div class="user-section-footer">
         </div>
+        </div>
+
     </nav>
     <div class="room-info">
         <div class = "roomId-section">
-            <div>Room Id: </div>
+            <div class="room-name"></div>
+            <div>Id: </div>
             <input type="text" value="" id = "roomId" readonly="readonly" />
         </div>
 
@@ -52,9 +54,10 @@
 
     </div>
     <div class="user-window"></div>
-    <div class="chat-menu" style="display: none;">
+    <div class="chat-menu">
+        <div class="chat-menu-arrow"><i class="fa-solid fa-caret-up"></i></div>
             <div class="users-in-room">
-            
+
             </div>
 
             <div class="chatroom">
@@ -62,14 +65,12 @@
 
                 </div>
                 <div class="message-send-field">
-
+                    <div contenteditable="true" minlength=1 class="chat-message"></div>
                 </div>
             </div>
         </div>
-    <div class="workspace">
-        <div class="workspace-wrapper">
+        <div class="workspace">
 
     </div>
-</div>
 </body>
 </html>
