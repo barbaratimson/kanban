@@ -25,10 +25,6 @@ function route($method,$urlList,$requestedData) {
                 }
 
                 break;
-            
-            case 'logout':
-
-                break;  
 
             default:
                 # code...

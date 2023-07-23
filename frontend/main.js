@@ -356,6 +356,7 @@ $(document).ready(function(){
                 }
                 })  
 
+
     $(".user-button").on('click',function(){
         $(".user-section").toggleClass("hide")
     })
@@ -371,6 +372,19 @@ $(document).ready(function(){
         $(".chat-menu").toggleClass("open")
     })
 
+
+    $("#change-room-password").on('click',function(e){
+        let roomPass = prompt("Select a new password")
+        if (roomOwner.username===user.username){
+            let result = $.changeRoomPassword(roomPass)
+            if (result){
+                alert(`New password is ${result.password}`)
+            } else {
+                alert(`Error`)
+            }
+        }
+    })
+
 $(".nav-grip").on('mousedown',function(e) {
         $(document).on("mousemove",function(e) { 
             posY = e.clientY-pageYOffset-35
@@ -384,13 +398,12 @@ $(".nav-grip").on('mouseup',function(e) {
 
 
 window.addEventListener( "pageshow", function ( event ) {
-    var historyTraversal = event.persisted || 
-                           ( typeof window.performance != "undefined" && 
-                                window.performance.navigation.type === 2 );
+    var historyTraversal = event.persisted || ( typeof window.performance != "undefined" && window.performance.navigation.type === 2 );
     if ( historyTraversal ) {   
       window.location.reload();
     }
   });
 
+  
 
 })

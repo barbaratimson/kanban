@@ -10,8 +10,7 @@
                 $userId = $users["user_id"];
                 $user = $link->query("SELECT id,username FROM users WHERE id='$userId'")->fetch_assoc();
                     if(is_null($users)){
-                        $message->message = "Error: Internal db error";
-                        echo json_encode($message);
+
                     }else {
                         echo json_encode($user);
                     }   
@@ -50,9 +49,16 @@
                 case 'logout':
 
                     $token = substr(getallheaders()['Authorization'],7);
-                    $result = $link->query("DELETE FROM `tokens` WHERE `tokens`.`accsess_token` = '$token'");
-                            echo json_encode($result);
+                    $users = $link->query("SELECT user_id FROM tokens WHERE accsess_token='$token'")->fetch_assoc();
+                    $userId = $users["user_id"];
+                    
+                    if(is_null($users)){
 
+                    }else {
+                        $result = $link->query("DELETE FROM `tokens` WHERE `tokens`.`user_id` = '$userId'");
+                        echo json_encode($result);
+                    }   
+                    
 
                         
                 break;

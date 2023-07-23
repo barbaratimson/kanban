@@ -34,20 +34,20 @@ function route($method,$urlList,$requestedData) {
                     if ($room){
                         if ($cardId){
                             if ($posX){
-                                $tokenInsertResult = $link->query("UPDATE `cards` SET `posX` = '$posX' WHERE `cards`.`id` = '$cardId'");
+                                $stickerUpdateResult = $link->query("UPDATE `cards` SET `posX` = '$posX' WHERE `cards`.`id` = '$cardId'");
                             }
                             if ($posY){
-                                $tokenInsertResult = $link->query("UPDATE `cards` SET `posY` = '$posY' WHERE `cards`.`id` = '$cardId'");
+                                $stickerUpdateResult = $link->query("UPDATE `cards` SET `posY` = '$posY' WHERE `cards`.`id` = '$cardId'");
 
                             }
                             if ($title){
-                                $tokenInsertResult = $link->query("UPDATE `cards` SET `title` = '$title' WHERE `cards`.`id` = '$cardId'");
+                                $stickerUpdateResult = $link->query("UPDATE `cards` SET `title` = '$title' WHERE `cards`.`id` = '$cardId'");
 
                             }
                             if ($text){
-                                $tokenInsertResult = $link->query("UPDATE `cards` SET `text` = '$text' WHERE `cards`.`id` = '$cardId'");
+                                $stickerUpdateResult = $link->query("UPDATE `cards` SET `text` = '$text' WHERE `cards`.`id` = '$cardId'");
                             }
-                            $message->message = $tokenInsertResult;
+                            $message->message = $stickerUpdateResult;
                             echo json_encode($message);
                         } 
 

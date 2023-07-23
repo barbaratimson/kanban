@@ -11,11 +11,11 @@
     <div class="auth-menu">
         <h1>Sign Up</h1>
         <h2>Login</h1>
-        <input type="text" id = "login">
+        <input type="text" class = "auth-field" id = "login">
         <h2>Password</h1>
-        <input type="text" id = "password">
+        <input type="password" class = "auth-field" id = "password1">
         <h2>Confirm password </h1>
-        <input type="text" id = "password">
+        <input type="password" class = "auth-field"  id = "password2">
         <button id = "register" class="auth-button" type="submit">Sign Up</button>
         <a href="./login.html">Sign in</a>
     </div>
@@ -23,8 +23,12 @@
 
 <script>
     $("#register").on('click', function(e){
-    e.preventDefault();
-        let userData = {username:$('#login').val(),password:$('#password').val()}
+        let pass1 = $('#password1').val()
+        let pass2 = $('#password2').val()
+        let login = $('#login').val()
+        if (login && pass1){
+        if (pass1===pass2){
+        let userData = {username:login,password:pass1}
         $.ajax({
             url: "http://localhost/user/register",
             data:JSON.stringify(userData),
@@ -33,6 +37,12 @@
             console.log(data)
             window.location.assign("./login.html")
          });
+        } else {
+            alert("Пароли не совпадают")
+        }
+    } else {
+        alert("Пустые поля")
+    }
 })
 
 </script>

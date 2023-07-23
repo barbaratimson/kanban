@@ -36,26 +36,7 @@ CREATE TABLE `cards` (
   `title` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `cards`
---
-
-INSERT INTO `cards` (`id`, `room_id`, `posX`, `posY`, `text`, `title`) VALUES
-(167, 1689802916415, 291, 447, '- Зарплаты хочецаfsdfsde', 'Отдел 1'),
-(168, 1689802916415, 211, 113, 'Wtite your text here123', 'Title'),
-(169, 1689802916415, 806, 125, 'Wtite your text here', 'Title'),
-(170, 1689802916415, -23, 428, 'Wtite your text here', 'Title'),
-(171, 1689802916415, 510, 120, 'Wtite your text here', 'Title'),
-(172, 1689802916415, 540, 445, 'Wtite your text here', 'Title'),
-(173, 1689802916415, 808, 427, 'Wtite your text here', 'Title'),
-(174, 1689802920437, 355, 193, 'Wtite your text here', 'Title'),
-(175, 1689802916415, 8, 785, 'Wtite your text here', 'Title'),
-(177, 1689989508368, 493, 344, 'Каникулы', 'Ураfsdfsdf'),
-(178, 1689989508368, 906, 454, 'Wtite your text here', 'Title'),
-(179, 1689989508368, 69, 244, 'Wtite your text here', 'Title'),
-(180, 1689802916415, -47, 118, 'Wtite your text here', 'Title');
-
--- --------------------------------------------------------
+----------------------------------------------------------
 
 --
 -- Структура таблицы `rooms`
@@ -67,20 +48,6 @@ CREATE TABLE `rooms` (
   `room_id` bigint NOT NULL,
   `password` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `rooms`
---
-
-INSERT INTO `rooms` (`id`, `owner_user_id`, `room_id`, `password`) VALUES
-(27, 6238, 1689802916415, '123'),
-(28, 6239, 1689802920437, ''),
-(29, 6240, 1689832086558, '123'),
-(30, 6241, 1689882016000, '1234'),
-(31, 6242, 1689989508368, '123'),
-(32, 6243, 1689990746855, '1234');
-
--- --------------------------------------------------------
 
 --
 -- Структура таблицы `tokens`
@@ -102,18 +69,6 @@ CREATE TABLE `users` (
   `username` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `users`
---
-
-INSERT INTO `users` (`id`, `username`, `password`) VALUES
-(6238, '123', '123'),
-(6239, '1234', '123'),
-(6240, '12345', '123'),
-(6241, '123456', '123'),
-(6242, 'barbaratimson', '123456'),
-(6243, 'SergeySokolov', '123');
 
 --
 -- Индексы сохранённых таблиц

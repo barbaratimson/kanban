@@ -32,6 +32,27 @@ function route($method,$urlList,$requestedData) {
             }
                 break;
             
+                case 'change':
+                    $password = $requestedData->body->password;
+                    $users = $link->query("SELECT user_id FROM tokens WHERE accsess_token='$token'")->fetch_assoc();
+                    $userId = $users["user_id"];
+                    if ($users){
+                    $rooms = $link->query("SELECT * FROM rooms WHERE owner_user_id='$userId'")->fetch_assoc();
+                    $roomId = $rooms["id"];
+                    if (!$rooms){
+
+                    } else {
+                        $updateResult = $link->query("UPDATE `rooms` SET `password` = '$password' WHERE `rooms`.`id` = '$roomId'");
+                        $message->result = $updateResult;
+                        $message->password =     $password  ;
+                        echo json_encode($message);
+                    }
+                } else {
+                    $message->message = "Bad token";
+                    echo json_encode($message);
+                }
+                    break;
+
             default:
                 # code...
                 break;

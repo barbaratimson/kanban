@@ -100,6 +100,39 @@ nav{
     
 }
 
+.user-section-footer {
+    display: flex;
+    position:absolute;
+    bottom: 15px;
+    right: 0;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.user-section-button {
+    border: 0;
+    outline: none;
+    background: rgb(227, 241, 247);
+    border-radius: 10px;
+    font-size: 15px;
+    padding: 5px;
+    font-weight: 500;
+    transition: all .3s;
+}
+
+
+.user-section-button:hover {
+    background-color: #6CCDF7;
+    scale: 1.05;
+}
+
+.user-section-button:active {
+    background-color: #6CCDF7;
+    scale: 0.95;
+}
+
 .controls {
    display: flex;
    flex-direction: row;
@@ -412,6 +445,10 @@ footer {
     rotate: 180deg;
 }
 
+.open .chat-menu:hover {
+    transform: none;
+}
+
 .open .chat-menu-arrow:hover {
     scale: 1.25;
 }
@@ -540,7 +577,7 @@ footer {
     scale: 0.9;
 }
 
-.auth-menu > #login,#password {
+.auth-field {
     
     height: 30px;
     font-size: 20px;

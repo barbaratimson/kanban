@@ -65,6 +65,24 @@ jQuery.extend({
 });
 
 jQuery.extend({
+    changeRoomPassword: function(password) {
+        var result = null;
+        $.ajax({
+            url: "http://localhost/room/change",
+            method:"POST",
+            async:false,
+            data:JSON.stringify({password:password}),
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` },
+            success: function(data) {
+                result = data;
+            }
+        });
+       return result;
+    }
+});
+
+
+jQuery.extend({
     getStickers: function(valid,roomId) {
         var result = null;
         $.ajax({

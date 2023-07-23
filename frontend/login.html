@@ -11,9 +11,9 @@
     <div class="auth-menu">
         <h1>Sign In</h1>
         <h2>Login</h1>
-        <input type="text" minlength="1" id = "login">
+        <input type="text" minlength="1" class = "auth-field" autofocus id = "login">
         <h2>Password</h1>
-        <input type="password" minlength="1" id = "password">
+        <input type="password" minlength="1" class = "auth-field" id = "password">
         <button id = "login-button" class="auth-button" type="submit">Sign In</button>
         <a href="./registration.html">Sign Up</a>
     </div>
@@ -21,7 +21,10 @@
 
 <script>
     $("#login-button").on('click', function(e){
-        let userData = {username:$('#login').val(),password:$('#password').val()}
+        let pass = $('#password').val()
+        let login = $('#login').val()
+        let userData = {username:login,password:pass}
+        if (login && pass){
         $.ajax({
             url: "http://localhost/auth/login",
             data:JSON.stringify(userData),  
@@ -32,6 +35,9 @@
          }).fail(function(){
             alert("Неправильный логин или пароль")
          });
+        } else {
+            alert("Пустые поля")
+        }
 })
 
 </script>

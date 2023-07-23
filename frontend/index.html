@@ -37,6 +37,7 @@
 
         <div class="user-section hide">
             <div class="user-section-footer">
+                <button class = "user-section-button" id = "change-room-password">Change room password</button>
         </div>
         </div>
 
@@ -54,7 +55,7 @@
 
     </div>
     <div class="user-window"></div>
-    <div class="chat-menu">
+    <div class="chat-menu open">
         <div class="chat-menu-arrow"><i class="fa-solid fa-caret-up"></i></div>
             <div class="users-in-room">
 
@@ -65,7 +66,7 @@
 
                 </div>
                 <div class="message-send-field">
-                    <div contenteditable="true" minlength=1 class="chat-message"></div>
+                    <div contenteditable="true" minlength=1 class="chat-message" tabindex="-1"></div>
                 </div>
             </div>
         </div>
