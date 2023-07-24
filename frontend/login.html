@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kanban</title>
-    <script src="lib/code.jquery.com_jquery-3.7.0.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <script src="lib/code.jquery.com_jquery-3.7.0.min.js"></script>
+    <script src="lib/jquery.extention.js"></script>
 </head>
 <body>  
     <div class="auth-menu">
@@ -20,6 +21,8 @@
 </body>
 
 <script>
+    let user = $.getUserData()
+    if (!user){
     $("#login-button").on('click', function(e){
         let pass = $('#password').val()
         let login = $('#login').val()
@@ -39,6 +42,10 @@
             alert("Пустые поля")
         }
 })
+
+    } else {
+        window.location.assign("./lobby.html")
+    }
 
 </script>
 </html>

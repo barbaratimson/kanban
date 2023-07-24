@@ -14,8 +14,8 @@ function route($method,$urlList,$requestedData) {
                 $password = $requestedData->body->password;
                 $rooms = $link->query("SELECT * FROM rooms WHERE owner_user_id='$userId'")->fetch_assoc();
                 if (is_null($rooms)){
-                    $tokenInsertResult = $link->query("INSERT INTO `rooms` (`owner_user_id`,`room_id`,`password`) VALUES ('$userId', '$roomId','$password')");
-                    if (!$tokenInsertResult){
+                    $roomInsertResult = $link->query("INSERT INTO `rooms` (`owner_user_id`,`room_id`,`password`) VALUES ('$userId', '$roomId','$password')");
+                    if (!$roomInsertResult){
                         $message->message = $link->error;
                     } else {
                         $message->roomId = $roomId;

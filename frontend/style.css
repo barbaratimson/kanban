@@ -285,6 +285,7 @@ footer {
     padding-bottom: 5px;
     border-bottom:1px solid black;
     transition: background-color .4s ease-in-out;
+    border-radius: 10px 10px 0 0;
 }
 
 .sticker-text {
@@ -297,6 +298,7 @@ footer {
     height: 175px;
     font-size: 18px;
     transition: background-color .4s ease-in-out;
+    border-radius: 10px;
 }
 
 

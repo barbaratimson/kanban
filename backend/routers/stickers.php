@@ -15,8 +15,8 @@ function route($method,$urlList,$requestedData) {
 
                 $room = $link->query("SELECT * FROM rooms WHERE room_id='$roomId'")->fetch_assoc();
                     if ($room){
-                        $tokenInsertResult = $link->query("INSERT INTO `cards` (`room_id`,`posX`,`posY`,`title`,`text`) VALUES ('$roomId','$posX','$posY','Title','Wtite your text here')");
-                        echo json_encode($tokenInsertResult);
+                        $cardInsertResult = $link->query("INSERT INTO `cards` (`room_id`,`posX`,`posY`,`title`,`text`) VALUES ('$roomId','$posX','$posY','Title','Wtite your text here')");
+                        echo json_encode($cardInsertResult);
                     }
                 }
                 break;
