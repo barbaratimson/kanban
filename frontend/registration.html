@@ -37,8 +37,12 @@
             data:JSON.stringify(userData),
             method:"POST",
          }).done(function(data){
-            console.log(data)
+            if (data.message.substring(0,5)=="Error"){
+                alert(data.message)
+         } else {
+            alert(data.message)
             window.location.assign("./login.html")
+         }
          });
         } else {
             alert("Пароли не совпадают")

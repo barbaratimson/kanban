@@ -256,6 +256,10 @@ function renderStickers(stickers) {
 $(document).ready(function () {
   $(".room-name").text(roomOwner.username + "`s room");
 
+  if (user.username != roomOwner.username){
+    $("#change-room-password").css("display","none")
+  }
+
   $(".sticker").on("click", function (e) {
     moveStickers($(this));
   });

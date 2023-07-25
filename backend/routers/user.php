@@ -26,7 +26,7 @@
                 $username = $requestedData->body->username;
                 $users = $link->query("SELECT * FROM users WHERE username='$username'")->fetch_assoc();
 
-                if (is_null($users) || is_null($requestedData->body)){
+                if (!$users && is_null($requestedData->body)){
                     $password = hash('sha1', $requestedData->password);
                     $password = $requestedData->body->password;
                     $userInsertResult = $link->query("INSERT INTO users(username,password) VALUES('$username','$password')");
